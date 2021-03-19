@@ -10,7 +10,7 @@ public class GuardianMovement : MonoBehaviour
         animMachine = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
+  
     void Update()
     {
         float speed = Input.GetAxisRaw("Vertical");
