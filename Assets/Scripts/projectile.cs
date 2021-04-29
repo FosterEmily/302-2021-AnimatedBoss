@@ -7,17 +7,11 @@ public class projectile : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
-        PlayerController player = other.GetComponent<PlayerController>();
-
-        if (player)
+        if (this.tag == ("Bullet") & other.tag == ("Enemy"))
         {
-
-            if (PlayerController.health >= 10)
-            {
-                player.TakeDamage(10);
-
-            }
-            Destroy(gameObject);
+            EnemyController.health -= 50;
+            print("enemy Damaged");
+            Destroy(gameObject); 
         }
 
     }

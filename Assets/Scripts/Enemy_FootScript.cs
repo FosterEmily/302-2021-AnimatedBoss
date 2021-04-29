@@ -2,15 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-/// <summary>
-/// this script animates the foot & the legs
-/// by changing the local position of this objects(IK target).
-/// </summary>
-public class FootAnimator : MonoBehaviour
+public class Enemy_FootScript : MonoBehaviour
 {
-    PlayerController playerController;
-    
+    EnemyController enemyController;
+
 
     private Vector3 startingPos;
 
@@ -24,8 +19,8 @@ public class FootAnimator : MonoBehaviour
 
     void Start()
     {
-        playerController = GetComponentInParent<PlayerController>();
-        
+        enemyController = GetComponentInParent<EnemyController>();
+
 
         startingPos = transform.localPosition;
         startingRot = transform.localRotation;
@@ -34,31 +29,35 @@ public class FootAnimator : MonoBehaviour
 
     void Update()
     {
-      
 
-        switch (playerController.state)
+
+        switch (enemyController.state)
         {
-            case PlayerController.States.Idle:
+            case EnemyController.States.Idle:
                 AnimateIdle();
                 break;
-            case PlayerController.States.Walk:
+            case EnemyController.States.Walk:
                 AnimateWalk();
+                enemyController.CarryOutDetection();
+                break;
+            case EnemyController.States.Death:
+               
                 break;
         }
     }
 
     void AnimateWalk()
     {
-        Vector3 finalPos = startingPos;
 
-        float time = ((Time.time + stepOffset) * playerController.stepSpeed);
+        Vector3 finalPos = startingPos;
+        float time = ((Time.time + stepOffset) * enemyController.stepSpeed);
         // lateral movement: (z + x)
         float frontToBack = Mathf.Sin(time);
-        finalPos += playerController.moveDir * frontToBack * playerController.walkScale.z;
+        //finalPos += enemyController.moveDir * frontToBack * enemyController.walkScale.z;
 
         // vertical movement: (y)
-        finalPos.y += Mathf.Cos(time) * playerController.walkScale.y;
-        finalPos.x *= playerController.walkScale.x;
+        finalPos.y += Mathf.Cos(time) * enemyController.walkScale.y;
+        finalPos.x *= enemyController.walkScale.x;
 
         //finalPos.x = playerController.walkScale.x;
 
@@ -74,6 +73,7 @@ public class FootAnimator : MonoBehaviour
 
         transform.localPosition = finalPos;
         transform.localRotation = startingRot * Quaternion.Euler(0, 0, anklePitch);
+
     }
 
     void AnimateIdle()
@@ -102,3 +102,5 @@ public class FootAnimator : MonoBehaviour
         }
     }
 }
+
+

@@ -6,8 +6,6 @@ public class CameraOrbit : MonoBehaviour
 {
     public PlayerController moveScript;
 
-
-
     private Camera cam;
 
     private float yaw = 0;
@@ -19,15 +17,14 @@ public class CameraOrbit : MonoBehaviour
 
     void Start()
     {
-
         cam = GetComponentInChildren<Camera>();
-
     }
 
 
     void Update()
     {
         PlayerOrbitCamera();
+
         transform.position = moveScript.transform.position;
     }
 
@@ -41,7 +38,11 @@ public class CameraOrbit : MonoBehaviour
         pitch += my * cameraSenY;
 
         pitch = Mathf.Clamp(pitch, 0, 15);
-        //yaw = Mathf.Clamp(yaw, -30, 30);
         transform.rotation = AnimMath.Slide(transform.rotation, Quaternion.Euler(pitch, yaw, 0), .001f);
     }
 }
+/*
+
+ 
+ 
+ */

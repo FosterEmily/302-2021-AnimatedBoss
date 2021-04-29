@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     private CharacterController pawn;
     //private bool isWalking = false;
-    public float moveSpeed = 5;
+    private float moveSpeed = 5;
     public float stepSpeed = 5;
     public Vector3 walkScale = Vector3.one;
     public Vector3 armScale = Vector3.one;
@@ -56,6 +56,12 @@ public class PlayerController : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
 
+        if (Input.GetButtonDown("Fire3"))
+        {
+            moveSpeed = 20;
+        }
+        if (Input.GetButtonUp("Fire3")) moveSpeed = 5;
+
         bool isJumpHeld = Input.GetButton("Jump");
         bool onJumpPress = Input.GetButtonDown("Jump");
 
@@ -64,7 +70,7 @@ public class PlayerController : MonoBehaviour
 
         if (isTryingToMove)
         {
-            print("Lerp");
+            //print("Lerp");
             float camYaw = cam.transform.eulerAngles.y;
             transform.rotation = AnimMath.Slide(transform.rotation, Quaternion.Euler(0, camYaw, 0), .02f);
         }
@@ -77,9 +83,11 @@ public class PlayerController : MonoBehaviour
 
         state = (moveDir.sqrMagnitude > .1f) ? States.Walk : States.Idle;
 
+
         verticalVelocity += gravity * Time.deltaTime;
         Vector3 moveDelta = moveDir * moveSpeed + verticalVelocity * Vector3.down;
         CollisionFlags flags = pawn.Move(moveDelta * Time.deltaTime);
+      
         if (pawn.isGrounded)
         {
             verticalVelocity = 0;// on ground, zero-out vertical-velocity
