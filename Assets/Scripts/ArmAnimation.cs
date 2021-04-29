@@ -2,12 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-/// <summary>
-/// this script animates the foot & the legs
-/// by changing the local position of this objects(IK target).
-/// </summary>
-public class FootAnimator : MonoBehaviour
+public class ArmAnimation : MonoBehaviour
 {
     PlayerController playerController;
 
