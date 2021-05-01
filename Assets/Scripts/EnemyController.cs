@@ -42,6 +42,7 @@ public class EnemyController : MonoBehaviour
     private Transform myTransform;
 
     private float destroyDelay = 2;
+    private float canSeeTimer = 3;
 
 
     public States state { get; private set; }
@@ -64,29 +65,35 @@ public class EnemyController : MonoBehaviour
 
        
         if (headTransform == null) headTransform = myTransform;
-        // state = (myTarget == null) ? States.Walk : States.Idle ;
-
         if (state == States.Death) destroyDelay -= Time.deltaTime;
-        if (myTarget == null) state = States.Idle;
+
+        if (canSeeTimer >= 0) canSeeTimer -= Time.deltaTime;
+        if (canSeeTimer >= 2) canSeeTimer = 2;
+        if (canSeeTimer <= 0)
+        {
+            myTarget = null;
+            state = States.Idle;
+        }
 
         print(state);
     }
-    bool CanSeeTarget(Transform potentialTarget)
+    public bool CanSeeTarget(Transform potentialTarget)
     {
-        print("HELP");
+        //print("HELP");
         if (Physics.Linecast(headTransform.position, potentialTarget.position, out hitTarget, sightLayer))
         {
         
             if (hitTarget.transform == potentialTarget)
             {
-                print("I SEE");
+                //print("I SEE");
+                canSeeTimer = 10;
                 myTarget = potentialTarget;
                // state = States.Walk;
                 return true;
             }
             else  
             {
-                print("hello");
+                //print("hello");
                 myTarget = null;
                 state = States.Idle;
                 return false;
@@ -94,7 +101,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            print("World");
+           // print("World");
             myTarget = null;
             state = States.Idle;
             return false;
@@ -134,16 +141,7 @@ public class EnemyController : MonoBehaviour
         if(myNavMeshAgent.speed == 0) { state = States.Idle; }
     }
 
-    public void TakeDamage(int amt)
-    {
-        if (amt <= 0) return;
-        health -= amt;
 
-        if (health <= 0)
-        {
-            Die();
-        }
-    }
     public void Die()
     {
         print("DEAD");
