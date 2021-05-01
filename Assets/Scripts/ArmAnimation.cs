@@ -15,6 +15,8 @@ public class ArmAnimation : MonoBehaviour
 
     private Vector3 targetPos;
     private Quaternion targetRot;
+    public Transform hand;
+    private Vector3 handStartpos;
 
     void Start()
     {
@@ -22,12 +24,14 @@ public class ArmAnimation : MonoBehaviour
 
         startingPos = transform.localPosition;
         startingRot = transform.localRotation;
+
+        handStartpos = hand.localPosition;
     }
 
 
     void Update()
     {
-
+        SlideArmBack();
         switch (playerController.state)
         {
             case PlayerController.States.Idle:
@@ -38,6 +42,11 @@ public class ArmAnimation : MonoBehaviour
                 break;
         }
     }
+    private void SlideArmBack()
+    {
+        transform.localPosition = AnimMath.Slide(transform.localPosition, startingPos, .25f);
+   
+    }
 
     void AnimateWalk()
     {
@@ -46,51 +55,23 @@ public class ArmAnimation : MonoBehaviour
         float time = ((Time.time + stepOffset) * playerController.stepSpeed);
         // lateral movement: (z + x)
         float frontToBack = Mathf.Sin(time);
-        finalPos += playerController.moveDir * frontToBack * playerController.walkScale.z;
+        finalPos += playerController.moveDir * frontToBack * playerController.armScale.z;
 
         // vertical movement: (y)
-        finalPos.y += Mathf.Cos(time) * playerController.walkScale.y;
-        finalPos.x *= playerController.walkScale.x;
-
-        //finalPos.x = playerController.walkScale.x;
-
-        bool isOnGround = (finalPos.y < startingPos.y);
-
-        if (isOnGround) finalPos.y = startingPos.y;
-
-
-        // convert from z (-1 to 1) to p (0 to 1 to 0)
-        float p = 1 - Mathf.Abs(frontToBack);
-
-        float anklePitch = isOnGround ? 0 : -p * 20;
+        finalPos.y += Mathf.Cos(time) * playerController.armScale.y;
+        finalPos.x *= playerController.armScale.x;
 
         transform.localPosition = finalPos;
-        transform.localRotation = startingRot * Quaternion.Euler(0, 0, anklePitch);
+      
     }
 
     void AnimateIdle()
     {
-        transform.localPosition = startingPos;
+        hand.localPosition = handStartpos;
         transform.localRotation = startingRot;
-        FindGround();
+        hand.localEulerAngles += new Vector3(0, 0, -20f);
+        hand.position += -hand.forward * .01f;
     }
 
-    void FindGround()
-    {
-        Ray ray = new Ray(transform.position + new Vector3(0, .5f, 0), Vector3.down * 2);
 
-        Debug.DrawRay(ray.origin, ray.direction);
-
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-
-            transform.position = hit.point;
-            //transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
-
-        }
-        else
-        {
-
-        }
-    }
 }
